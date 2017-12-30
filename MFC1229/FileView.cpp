@@ -4,18 +4,18 @@
 #include "FileView.h"
 #include "Resource.h"
 #include "MFC1229.h"
-
+#include "Item.h"
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
-
 /////////////////////////////////////////////////////////////////////////////
 // CFileView
 
 CFileView::CFileView()
 {
+	m_nowPie = NULL;
 }
 
 CFileView::~CFileView()
@@ -25,7 +25,7 @@ CFileView::~CFileView()
 BEGIN_MESSAGE_MAP(CFileView, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
-	ON_WM_CONTEXTMENU()
+//	ON_WM_CONTEXTMENU()
 	ON_COMMAND(ID_PROPERTIES, OnProperties)
 	ON_COMMAND(ID_OPEN, OnFileOpen)
 	ON_COMMAND(ID_OPEN_WITH, OnFileOpenWith)
@@ -49,17 +49,17 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	rectDummy.SetRectEmpty();
 
 	// 创建视图: 
-	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS;
-
-	if (!m_wndFileView.Create(dwViewStyle, rectDummy, this, 4))
+	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_EX_CHECKBOXES;
+	//m_wndListCtrl.Create(dwViewStyle, rectDummy, this, 4);
+	if (!m_wndListCtrl.Create(dwViewStyle, rectDummy, this, 4))
 	{
 		TRACE0("未能创建文件视图\n");
 		return -1;      // 未能创建
 	}
 
 	// 加载视图图像: 
-	m_FileViewImages.Create(IDB_FILE_VIEW, 16, 0, RGB(255, 0, 255));
-	m_wndFileView.SetImageList(&m_FileViewImages, TVSIL_NORMAL);
+	 m_FileViewImages.Create(IDB_FILE_VIEW, 16, 0, RGB(255, 0, 255));
+	 m_wndListCtrl.SetImageList(&m_FileViewImages, TVSIL_NORMAL);
 
 	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EXPLORER);
 	m_wndToolBar.LoadToolBar(IDR_EXPLORER, 0, 0, TRUE /* 已锁定*/);
@@ -78,7 +78,8 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// 填入一些静态树视图数据(此处只需填入虚拟代码，而不是复杂的数据)
 	FillFileView();
 	AdjustLayout();
-
+	// 注册响应事件
+	TManager::Get()->RegistFunc(std::bind(&CFileView::TMsgFunction, this, std::placeholders::_1, std::placeholders::_2));
 	return 0;
 }
 
@@ -90,67 +91,76 @@ void CFileView::OnSize(UINT nType, int cx, int cy)
 
 void CFileView::FillFileView()
 {
-	HTREEITEM hRoot = m_wndFileView.InsertItem(_T("FakeApp 文件"), 0, 0);
-	m_wndFileView.SetItemState(hRoot, TVIS_BOLD, TVIS_BOLD);
-
-	HTREEITEM hSrc = m_wndFileView.InsertItem(_T("FakeApp 源文件"), 0, 0, hRoot);
-
-	m_wndFileView.InsertItem(_T("FakeApp.cpp"), 1, 1, hSrc);
-	m_wndFileView.InsertItem(_T("FakeApp.rc"), 1, 1, hSrc);
-	m_wndFileView.InsertItem(_T("FakeAppDoc.cpp"), 1, 1, hSrc);
-	m_wndFileView.InsertItem(_T("FakeAppView.cpp"), 1, 1, hSrc);
-	m_wndFileView.InsertItem(_T("MainFrm.cpp"), 1, 1, hSrc);
-	m_wndFileView.InsertItem(_T("StdAfx.cpp"), 1, 1, hSrc);
-
-	HTREEITEM hInc = m_wndFileView.InsertItem(_T("FakeApp 头文件"), 0, 0, hRoot);
-
-	m_wndFileView.InsertItem(_T("FakeApp.h"), 2, 2, hInc);
-	m_wndFileView.InsertItem(_T("FakeAppDoc.h"), 2, 2, hInc);
-	m_wndFileView.InsertItem(_T("FakeAppView.h"), 2, 2, hInc);
-	m_wndFileView.InsertItem(_T("Resource.h"), 2, 2, hInc);
-	m_wndFileView.InsertItem(_T("MainFrm.h"), 2, 2, hInc);
-	m_wndFileView.InsertItem(_T("StdAfx.h"), 2, 2, hInc);
-
-	HTREEITEM hRes = m_wndFileView.InsertItem(_T("FakeApp 资源文件"), 0, 0, hRoot);
-
-	m_wndFileView.InsertItem(_T("FakeApp.ico"), 2, 2, hRes);
-	m_wndFileView.InsertItem(_T("FakeApp.rc2"), 2, 2, hRes);
-	m_wndFileView.InsertItem(_T("FakeAppDoc.ico"), 2, 2, hRes);
-	m_wndFileView.InsertItem(_T("FakeToolbar.bmp"), 2, 2, hRes);
-
-	m_wndFileView.Expand(hRoot, TVE_EXPAND);
-	m_wndFileView.Expand(hSrc, TVE_EXPAND);
-	m_wndFileView.Expand(hInc, TVE_EXPAND);
-}
-
-void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
-{
-	CTreeCtrl* pWndTree = (CTreeCtrl*) &m_wndFileView;
-	ASSERT_VALID(pWndTree);
-
-	if (pWnd != pWndTree)
+	m_wndListCtrl.DeleteAllItems();
+	if (m_nowPie == NULL)
 	{
-		CDockablePane::OnContextMenu(pWnd, point);
 		return;
 	}
-
-	if (point != CPoint(-1, -1))
+	m_wndListCtrl.SetExtendedStyle(LVS_EX_CHECKBOXES);
+	m_wndListCtrl.InsertColumn(0, _T(" "), LVCFMT_LEFT, 25);
+	m_wndListCtrl.InsertColumn(1, _T("类目"), LVCFMT_LEFT, 80);
+	m_wndListCtrl.InsertColumn(2, _T("金额"), LVCFMT_LEFT, 100);
+	auto data = m_nowPie->GetDatas();
+	for (int i = 0; i < data->size(); i++)
 	{
-		// 选择已单击的项: 
-		CPoint ptTree = point;
-		pWndTree->ScreenToClient(&ptTree);
+		auto& it = (*data)[i];
 
-		UINT flags = 0;
-		HTREEITEM hTreeItem = pWndTree->HitTest(ptTree, &flags);
-		if (hTreeItem != NULL)
-		{
-			pWndTree->SelectItem(hTreeItem);
-		}
+		m_wndListCtrl.InsertItem(i, _T(""));
+		m_wndListCtrl.SetItemData(i, (DWORD_PTR)(&it)); 
+		m_wndListCtrl.SetCheck(i, it.isActive);
+
+		m_wndListCtrl.SetItemText(i, 1, it.m_name);
+		CString num;
+		num.Format(_T("%d"), it.m_count);
+		m_wndListCtrl.SetItemText(i, 2, num);
 	}
-
-	pWndTree->SetFocus();
-	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);
 }
+
+void CFileView::TMsgFunction(void * param, TMsgType type)
+{
+	switch (type)
+	{
+	case FoucsPieChange:
+		m_nowPie = static_cast<CPie*> (param);
+		FillFileView();
+		break;
+	case DeleteNowPie:
+		m_nowPie = NULL;
+		FillFileView();
+		break;
+	default:
+		break;
+	}
+}
+
+//void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
+//{
+//	CTreeCtrl* pWndTree = (CTreeCtrl*) &m_wndFileView;
+//	ASSERT_VALID(pWndTree);
+//
+//	if (pWnd != pWndTree)
+//	{
+//		CDockablePane::OnContextMenu(pWnd, point);
+//		return;
+//	}
+//
+//	if (point != CPoint(-1, -1))
+//	{
+//		// 选择已单击的项: 
+//		CPoint ptTree = point;
+//		pWndTree->ScreenToClient(&ptTree);
+//
+//		UINT flags = 0;
+//		HTREEITEM hTreeItem = pWndTree->HitTest(ptTree, &flags);
+//		if (hTreeItem != NULL)
+//		{
+//			pWndTree->SelectItem(hTreeItem);
+//		}
+//	}
+//
+//	pWndTree->SetFocus();
+//	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);
+//}
 
 void CFileView::AdjustLayout()
 {
@@ -165,7 +175,7 @@ void CFileView::AdjustLayout()
 	int cyTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
 	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), cyTlb, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndFileView.SetWindowPos(NULL, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndListCtrl.SetWindowPos(NULL, rectClient.left + 1, rectClient.top + cyTlb + 1, rectClient.Width() - 2, rectClient.Height() - cyTlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CFileView::OnProperties()
@@ -209,7 +219,7 @@ void CFileView::OnPaint()
 	CPaintDC dc(this); // 用于绘制的设备上下文
 
 	CRect rectTree;
-	m_wndFileView.GetWindowRect(rectTree);
+	m_wndListCtrl.GetWindowRect(rectTree);
 	ScreenToClient(rectTree);
 
 	rectTree.InflateRect(1, 1);
@@ -220,7 +230,7 @@ void CFileView::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
 
-	m_wndFileView.SetFocus();
+	m_wndListCtrl.SetFocus();
 }
 
 void CFileView::OnChangeVisualStyle()
@@ -250,7 +260,7 @@ void CFileView::OnChangeVisualStyle()
 	m_FileViewImages.Create(16, bmpObj.bmHeight, nFlags, 0, 0);
 	m_FileViewImages.Add(&bmp, RGB(255, 0, 255));
 
-	m_wndFileView.SetImageList(&m_FileViewImages, TVSIL_NORMAL);
+	m_wndListCtrl.SetImageList(&m_FileViewImages, TVSIL_NORMAL);
 }
 
 

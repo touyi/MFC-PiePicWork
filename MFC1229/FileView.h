@@ -2,7 +2,7 @@
 #pragma once
 
 #include "ViewTree.h"
-
+#include"Pie.h"
 class CFileViewToolBar : public CMFCToolBar
 {
 	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
@@ -12,7 +12,7 @@ class CFileViewToolBar : public CMFCToolBar
 
 	virtual BOOL AllowShowOnList() const { return FALSE; }
 };
-
+#include"TManager.h"
 class CFileView : public CDockablePane
 {
 // 构造
@@ -24,14 +24,15 @@ public:
 
 // 特性
 protected:
-
-	CViewTree m_wndFileView;
+	CListCtrl m_wndListCtrl;
+	// CViewTree m_wndFileView;
 	CImageList m_FileViewImages;
 	CFileViewToolBar m_wndToolBar;
 
 protected:
 	void FillFileView();
-
+	void TMsgFunction(void*, TMsgType type);
+	CPie* m_nowPie;
 // 实现
 public:
 	virtual ~CFileView();
@@ -39,7 +40,7 @@ public:
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+//	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnProperties();
 	afx_msg void OnFileOpen();
 	afx_msg void OnFileOpenWith();

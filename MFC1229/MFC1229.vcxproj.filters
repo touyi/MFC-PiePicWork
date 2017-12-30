@@ -66,6 +66,9 @@
     <ClInclude Include="TVector.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="TManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFC1229.cpp">
@@ -108,6 +111,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TVector.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

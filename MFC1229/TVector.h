@@ -38,6 +38,10 @@ public:
 			}
 		}
 	}
+	void erase(int index)
+	{
+		vec.erase(vec.begin() + index);
+	}
 	T& operator[](int index) {
 		return vec[index];
 	}

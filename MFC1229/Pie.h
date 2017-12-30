@@ -1,5 +1,5 @@
 #pragma once
-typedef const char* cchar;
+typedef CString cchar;
 
 template<typename T>
 struct CItem;
@@ -11,6 +11,7 @@ class CPie
 public:
 	typedef CItem<cchar> CI;
 	CPie(CRect &rc, CString title);
+	explicit CPie(CString title);
 	~CPie();
 	void Draw(CDC* pdc);
 	void DeleteItem(CI& item);
@@ -33,5 +34,6 @@ private:
 	void DrawTitle(CDC* pdc, float windowPray);
 	void DrawLegend(CDC* pdc, float windowPray);
 	void DrawPie(CDC* pdc, float windowPray);
+	void DrawPic(CDC* pdc, CPoint point,CString);
 };
 

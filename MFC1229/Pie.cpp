@@ -12,6 +12,10 @@ m_title(title)
 	
 }
 
+CPie::CPie(CString title):m_title(title)
+{
+}
+
 
 CPie::~CPie()
 {
@@ -183,13 +187,16 @@ void CPie::DrawPie(CDC * pdc, float windowPray)
 	CPoint p_start = { radius,0 };
 	CPoint p_half_end = { int(radius*cos(angle / 2 * PI / 180)),-int(radius*sin(angle / 2 * PI / 180)) };
 	CPoint p_end = { int(radius*cos(angle * PI / 180)),-int(radius*sin(angle * PI / 180)) };
+	
+	
+	auto oldPen = pdc->SelectObject(CreateSolidBrush(GetItemByName(mp.begin()->first).m_color));
+	pdc->Pie(rc, p_start + mid, p_end + mid);
+
 	// 绘制首个图标
 	p_half_end += mid;
 	// 绘制代码TODO
-	
-	auto oldPen = pdc->SelectObject(CreateSolidBrush(GetItemByName(mp.begin()->first).m_color));
+	DrawPic(pdc, p_half_end, GetItemByName(mp.begin()->first).m_img);
 
-	pdc->Pie(rc, p_start + mid, p_end + mid);
 	for (auto it = ++mp.begin(); it != mp.end(); it++)
 	{
 		// 绘制扇形
@@ -204,6 +211,42 @@ void CPie::DrawPie(CDC * pdc, float windowPray)
 		p_half_end = { int(radius*cos(half_angle * PI / 180)),-int(radius*sin(half_angle * PI / 180)) };
 		p_half_end += mid;
 		// 绘制代码 TODO
+		DrawPic(pdc, p_half_end, GetItemByName(it->first).m_img);
 	}
 	pdc->SelectObject(oldPen);
+}
+
+void CPie::DrawPic(CDC * pdc, CPoint point,CString path)
+{
+	CImage img;
+	img.Load(_T(".//res/pic/star.png"));
+	int iheight = img.GetHeight();
+	int iwidth = img.GetWidth();
+	CRect rect(point.x - iwidth / 2, point.y - iheight / 2, point.x + iwidth/2, point.y + iheight/2);
+	HBITMAP hbitmap = img.Detach();
+	CBitmap cBitmap;
+	BITMAP bitmap;
+	cBitmap.Attach(hbitmap);
+	cBitmap.GetBitmap(&bitmap);
+	if (cBitmap.GetSafeHandle())
+	{
+		CDC tmpdc;
+		tmpdc.CreateCompatibleDC(pdc);
+		CBitmap *pOldBitmap = tmpdc.SelectObject(&cBitmap);
+
+		int nXOriginDest = 0;
+		int nYOriginDest = 0;
+		int nWidthDest = 0;
+		int hHeightDest = 0;
+
+		nXOriginDest = rect.left;// 目标X偏移  
+		nYOriginDest = rect.top;// 目标Y偏移  
+		nWidthDest = rect.Width();// 目标宽度  
+		hHeightDest = rect.Height();// 目标高度  
+
+		::TransparentBlt(pdc->m_hDC, nXOriginDest, nYOriginDest, nWidthDest, hHeightDest,
+			tmpdc.m_hDC, 0, 0, bitmap.bmWidth, bitmap.bmHeight, RGB(255, 255, 255));//白色作为透明色  
+		tmpdc.SelectObject(pOldBitmap);
+		tmpdc.DeleteDC();
+	}
 }
