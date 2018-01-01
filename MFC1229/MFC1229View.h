@@ -42,6 +42,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 //	afx_msg void OnChildActivate();
+//	afx_msg void OnSetFocus(CWnd* pOldWnd);
+//	afx_msg void OnKillFocus(CWnd* pNewWnd);
+//	afx_msg void OnMDIActivate(BOOL bActivate, CWnd* pActivateWnd, CWnd* pDeactivateWnd);
+//	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
 };
 
 #ifndef _DEBUG  // MFC1229View.cpp 中的调试版本

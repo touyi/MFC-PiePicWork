@@ -28,13 +28,16 @@ void TManager::SetNowPie(CString name)
 {
 	if (m_pies.count(name) > 0)
 	{
-		m_nowPies = m_pies[name];
-		CallFunc(m_nowPies, TMsgType::FoucsPieChange);
+		if (m_pies[name] != m_nowPies)
+		{
+			m_nowPies = m_pies[name];
+			CallFunc(m_nowPies, TMsgType::FoucsPieChange);
+		}
 	}
 	else
 	{
-		m_nowPies = NULL;
-		CallFunc(NULL, TMsgType::DeleteNowPie);
+		/*m_nowPies = NULL;
+		CallFunc(NULL, TMsgType::DeleteNowPie);*/
 	}
 }
 
@@ -54,12 +57,18 @@ void TManager::CallFunc(void * param, TMsgType type)
 TManager::TManager()
 {
 	m_nowPies = NULL;
-	m_nowPies = new CPie(CString("MFC1229"));
+	m_nowPies = new CPie(CString("这是饼图1"));
 	m_nowPies->InsertItem(_T("类型1"), 100);
 	m_nowPies->InsertItem(_T("类型2"), 100);
 	m_nowPies->InsertItem(_T("类型3"), 100);
 	m_pies[CString("MFC12291")] = m_nowPies;
-	CallFunc(m_nowPies, TMsgType::FoucsPieChange);
+
+	m_nowPies = new CPie(CString("这是饼图2"));
+	m_nowPies->InsertItem(_T("类型88"), 300);
+	m_nowPies->InsertItem(_T("类型99"), 200);
+	m_nowPies->InsertItem(_T("类型145"), 100);
+	m_pies[CString("MFC12292")] = m_nowPies;
+	m_nowPies = NULL;
 }
 
 

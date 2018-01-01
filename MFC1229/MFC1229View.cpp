@@ -25,6 +25,10 @@ BEGIN_MESSAGE_MAP(CMFC1229View, CView)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
 //	ON_WM_CHILDACTIVATE()
+//ON_WM_SETFOCUS()
+//ON_WM_KILLFOCUS()
+//ON_WM_MDIACTIVATE()
+ON_WM_SETFOCUS()
 END_MESSAGE_MAP()
 
 // CMFC1229View 构造/析构
@@ -126,3 +130,34 @@ CMFC1229Doc* CMFC1229View::GetDocument() const // 非调试版本是内联的
 //	MessageBox(pDoc->GetTitle());
 //	// TODO: 在此处添加消息处理程序代码
 //}
+
+
+
+//void CMFC1229View::OnMDIActivate(BOOL bActivate, CWnd* pActivateWnd, CWnd* pDeactivateWnd)
+//{
+//	CView::OnMDIActivate(bActivate, pActivateWnd, pDeactivateWnd);
+//
+//	// TODO: 在此处添加消息处理程序代码
+//	
+//}
+
+
+//void CMFC1229View::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+//{
+//	// TODO: 在此添加专用代码和/或调用基类
+//	
+//	CView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+//}
+
+
+void CMFC1229View::OnSetFocus(CWnd* pOldWnd)
+{
+	CView::OnSetFocus(pOldWnd);
+	CString str1;
+	auto doc = GetDocument();
+	if (doc != NULL)
+	{
+		TManager::Get()->SetNowPie(doc->GetTitle());
+	}
+	// TODO: 在此处添加消息处理程序代码
+}
