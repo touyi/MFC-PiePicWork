@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "TManager.h"
-
+#include"Item.h"
 TManager* TManager::instance;
 CPie * TManager::GetPieByName(CString name)
 {
@@ -52,6 +52,24 @@ void TManager::CallFunc(void * param, TMsgType type)
 	{
 		(*it)(param, type);
 	}
+}
+
+void TManager::SetPieItemActive(CString itemName, bool isActive)
+{
+	auto& item = m_nowPies->GetItemByName(itemName);
+	if (isActive != item.isActive)
+	{
+		item.isActive = isActive;
+		CallFunc(NULL, TMsgType::ReDrawPie);
+	}
+}
+
+void TManager::SetPieItemName(CString oldName, CString newName)
+{
+}
+
+void TManager::SetPieItemCount(CString itemName, int newCount)
+{
 }
 
 TManager::TManager()

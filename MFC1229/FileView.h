@@ -30,6 +30,8 @@ protected:
 	CFileViewToolBar m_wndToolBar;
 
 protected:
+	// ¸´Ð´½ûÓÃÍ£¿¿²Ëµ¥
+	virtual BOOL OnShowControlBarMenu(CPoint point);
 	void FillFileView();
 	void TMsgFunction(void*, TMsgType type);
 	CPie* m_nowPie;
@@ -50,7 +52,12 @@ protected:
 	afx_msg void OnEditClear();
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-
+	afx_msg void OnLVNChangedCtrlList(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMRClickCtrlList(NMHDR *pNMHDR, LRESULT *pResult);
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnListNew();
+	afx_msg void OnListDelete();
+	afx_msg void OnListChange();
 };
 

@@ -362,6 +362,16 @@ BEGIN
     MENUITEM "Windows 7(&D)",               ID_VIEW_APPLOOK_WINDOWS_7
 END
 
+IDR_MENU1 MENU
+BEGIN
+    POPUP "LIST"
+    BEGIN
+        MENUITEM "新增",                          ID_LIST_NEW
+        MENUITEM "删除",                          ID_LIST_DELETE
+        MENUITEM "修改",                          ID_LIST_CHANGE
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -584,6 +594,7 @@ BEGIN
     IDS_STATUS_PANE2        "窗格 2"
     IDS_TOOLBAR_STANDARD    "标准"
     IDS_TOOLBAR_CUSTOMIZE   "自定义..."
+    ID_MY_LISTCTRL          "我的listctrl"
 END
 
 STRINGTABLE

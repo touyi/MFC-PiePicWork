@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include"Pie.h"
+#include"TManager.h"
 #include<map>
 using std::map;
 class CMFC1229View : public CView
@@ -34,6 +34,7 @@ public:
 #endif
 
 protected:
+	void ReDraw(void*, TMsgType);
 // 生成的消息映射函数
 protected:
 	afx_msg void OnFilePrintPreview();

@@ -29,6 +29,9 @@ BEGIN_MESSAGE_MAP(CMFC1229View, CView)
 //ON_WM_KILLFOCUS()
 //ON_WM_MDIACTIVATE()
 ON_WM_SETFOCUS()
+//ON_COMMAND(ID_LIST_NEW, &CMFC1229View::OnListNew)
+//ON_COMMAND(ID_LIST_DELETE, &CMFC1229View::OnListDelete)
+//ON_COMMAND(ID_LIST_CHANGE, &CMFC1229View::OnListChange)
 END_MESSAGE_MAP()
 
 // CMFC1229View 构造/析构
@@ -36,6 +39,7 @@ END_MESSAGE_MAP()
 CMFC1229View::CMFC1229View()
 {
 	// TODO: 在此处添加构造代码
+	TManager::Get()->RegistFunc(std::bind(&CMFC1229View::ReDraw, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 CMFC1229View::~CMFC1229View()
@@ -110,6 +114,14 @@ void CMFC1229View::AssertValid() const
 void CMFC1229View::Dump(CDumpContext& dc) const
 {
 	CView::Dump(dc);
+}
+
+void CMFC1229View::ReDraw(void *, TMsgType type)
+{
+	if (type == TMsgType::ReDrawPie)
+	{
+		Invalidate();
+	}
 }
 
 CMFC1229Doc* CMFC1229View::GetDocument() const // 非调试版本是内联的

@@ -35,6 +35,11 @@ BEGIN_MESSAGE_MAP(CFileView, CDockablePane)
 	ON_COMMAND(ID_EDIT_CLEAR, OnEditClear)
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
+	ON_NOTIFY(LVN_ITEMCHANGED,ID_MY_LISTCTRL,&CFileView::OnLVNChangedCtrlList)
+	ON_NOTIFY(NM_RCLICK, ID_MY_LISTCTRL, &CFileView::OnNMRClickCtrlList)
+	ON_COMMAND(ID_LIST_NEW, &CFileView::OnListNew)
+	ON_COMMAND(ID_LIST_DELETE, &CFileView::OnListDelete)
+	ON_COMMAND(ID_LIST_CHANGE, &CFileView::OnListChange)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -49,9 +54,10 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	rectDummy.SetRectEmpty();
 
 	// 创建视图: 
-	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_EX_CHECKBOXES;
+	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | LVS_REPORT | /*LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES |*/ LVS_EX_CHECKBOXES;
+
 	//m_wndListCtrl.Create(dwViewStyle, rectDummy, this, 4);
-	if (!m_wndListCtrl.Create(dwViewStyle, rectDummy, this, 4))
+	if (!m_wndListCtrl.Create(dwViewStyle, rectDummy, this, ID_MY_LISTCTRL))
 	{
 		TRACE0("未能创建文件视图\n");
 		return -1;      // 未能创建
@@ -89,6 +95,11 @@ void CFileView::OnSize(UINT nType, int cx, int cy)
 	AdjustLayout();
 }
 
+BOOL CFileView::OnShowControlBarMenu(CPoint point)
+{
+	return TRUE;
+}
+
 void CFileView::FillFileView()
 {
 	m_wndListCtrl.DeleteAllItems();
@@ -96,7 +107,7 @@ void CFileView::FillFileView()
 	{
 		return;
 	}
-	m_wndListCtrl.SetExtendedStyle(LVS_EX_CHECKBOXES);
+	m_wndListCtrl.SetExtendedStyle(LVS_EX_CHECKBOXES | LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
 	m_wndListCtrl.InsertColumn(0, _T(" "), LVCFMT_LEFT, 25);
 	m_wndListCtrl.InsertColumn(1, _T("类目"), LVCFMT_LEFT, 80);
 	m_wndListCtrl.InsertColumn(2, _T("金额"), LVCFMT_LEFT, 100);
@@ -233,6 +244,44 @@ void CFileView::OnSetFocus(CWnd* pOldWnd)
 	m_wndListCtrl.SetFocus();
 }
 
+void CFileView::OnLVNChangedCtrlList(NMHDR * pNMHDR, LRESULT * pResult)
+{
+
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+	// 选择状态改变
+	if ((pNMLV->uOldState & INDEXTOSTATEIMAGEMASK(1)) 
+		&& (pNMLV->uNewState & INDEXTOSTATEIMAGEMASK(2)) 
+		|| (pNMLV->uOldState & INDEXTOSTATEIMAGEMASK(2)) 
+		&& (pNMLV->uNewState & INDEXTOSTATEIMAGEMASK(1)) 
+		)
+	{
+		auto data = reinterpret_cast<CItem<cchar>*>(pNMLV->lParam);
+		bool checkState = 1 & m_wndListCtrl.GetCheck(pNMLV->iItem);
+		if(data->isActive != checkState)
+			TManager::Get()->SetPieItemActive(data->m_name, checkState);
+	}
+	*pResult = 0;
+}
+
+void CFileView::OnNMRClickCtrlList(NMHDR * pNMHDR, LRESULT * pResult)
+{
+	auto pos = m_wndListCtrl.GetFirstSelectedItemPosition();
+	int iitem = m_wndListCtrl.GetNextSelectedItem(pos);
+	if (iitem != -1)
+	{
+		DWORD dwPos = GetMessagePos();
+		CPoint point(LOWORD(dwPos), HIWORD(dwPos));
+		CMenu menu;
+		//添加线程操作  
+		VERIFY(menu.LoadMenu(IDR_MENU1));
+		CMenu* popup = menu.GetSubMenu(0);
+		ASSERT(popup != NULL);
+		popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+	}
+}
+
+
 void CFileView::OnChangeVisualStyle()
 {
 	m_wndToolBar.CleanUpLockedImages();
@@ -264,3 +313,35 @@ void CFileView::OnChangeVisualStyle()
 }
 
 
+
+
+void CFileView::OnListNew()
+{
+	// TODO: 新增加元数据
+}
+
+
+void CFileView::OnListDelete()
+{
+	// TODO: 在此添加命令处理程序代码
+	auto pos = m_wndListCtrl.GetFirstSelectedItemPosition();
+	int iitem = m_wndListCtrl.GetNextSelectedItem(pos);
+	if (iitem != -1)
+	{
+		auto it = (CItem<cchar>*)m_wndListCtrl.GetItemData(iitem);
+		// TODO：删除it 
+	}
+}
+
+
+void CFileView::OnListChange()
+{
+	// TODO: 在此添加命令处理程序代码
+	auto pos = m_wndListCtrl.GetFirstSelectedItemPosition();
+	int iitem = m_wndListCtrl.GetNextSelectedItem(pos);
+	if (iitem != -1)
+	{
+		auto it = (CItem<cchar>*)m_wndListCtrl.GetItemData(iitem);
+		// TODO：修改it 
+	}
+}

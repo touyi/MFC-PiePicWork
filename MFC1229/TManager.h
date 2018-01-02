@@ -6,7 +6,8 @@ using std::function;
 using std::map;
 enum TMsgType {
 	FoucsPieChange,
-	DeleteNowPie
+	DeleteNowPie,
+	ReDrawPie
 };
 class TManager
 {
@@ -29,6 +30,9 @@ public:
 	void SetNowPie(CString name);
 	void RegistFunc(function<void(void*, TMsgType)> fun);
 	void CallFunc(void* param, TMsgType type);
+	void SetPieItemActive(CString itemName, bool isActive);
+	void SetPieItemName(CString oldName, CString newName);
+	void SetPieItemCount(CString itemName, int newCount);
 	TManager();
 	~TManager();
 };
