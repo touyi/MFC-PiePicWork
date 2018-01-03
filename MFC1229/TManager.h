@@ -33,6 +33,7 @@ public:
 	void SetPieItemActive(CString itemName, bool isActive);
 	void SetPieItemName(CString oldName, CString newName);
 	void SetPieItemCount(CString itemName, int newCount);
+	void DeleteNowPieItem(CString name);
 	TManager();
 	~TManager();
 };

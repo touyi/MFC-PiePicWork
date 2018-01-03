@@ -72,6 +72,14 @@ void TManager::SetPieItemCount(CString itemName, int newCount)
 {
 }
 
+void TManager::DeleteNowPieItem(CString name)
+{
+	if (m_nowPies == NULL)
+		return;
+	m_nowPies->DeleteItemByName(name);
+	CallFunc(NULL, TMsgType::ReDrawPie);
+}
+
 TManager::TManager()
 {
 	m_nowPies = NULL;
