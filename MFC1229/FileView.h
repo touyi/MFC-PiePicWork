@@ -59,5 +59,6 @@ public:
 	afx_msg void OnListNew();
 	afx_msg void OnListDelete();
 	afx_msg void OnListChange();
+//	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 };
 

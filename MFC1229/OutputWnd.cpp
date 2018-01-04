@@ -22,6 +22,14 @@ COutputWnd::~COutputWnd()
 {
 }
 
+void COutputWnd::OutOutCallBack(void * param, TMsgType type)
+{
+	if (type == TMsgType::OutPutMessage)
+	{
+		m_wndOutputBuild.AddString(*(CString*)param);
+	}
+}
+
 BEGIN_MESSAGE_MAP(COutputWnd, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
@@ -62,18 +70,20 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	bNameValid = strTabName.LoadString(IDS_BUILD_TAB);
 	ASSERT(bNameValid);
 	m_wndTabs.AddTab(&m_wndOutputBuild, strTabName, (UINT)0);
-	bNameValid = strTabName.LoadString(IDS_DEBUG_TAB);
+	/*bNameValid = strTabName.LoadString(IDS_DEBUG_TAB);
 	ASSERT(bNameValid);
 	m_wndTabs.AddTab(&m_wndOutputDebug, strTabName, (UINT)1);
 	bNameValid = strTabName.LoadString(IDS_FIND_TAB);
 	ASSERT(bNameValid);
-	m_wndTabs.AddTab(&m_wndOutputFind, strTabName, (UINT)2);
+	m_wndTabs.AddTab(&m_wndOutputFind, strTabName, (UINT)2);*/
 
 	// 使用一些虚拟文本填写输出选项卡(无需复杂数据)
 	FillBuildWindow();
 	FillDebugWindow();
 	FillFindWindow();
 
+	// 注册输出函数到管理类
+	TIns->RegistFunc(std::bind(&COutputWnd::OutOutCallBack, this, std::placeholders::_1, std::placeholders::_2),_T("OutPutWnd"));
 	return 0;
 }
 
@@ -106,9 +116,9 @@ void COutputWnd::AdjustHorzScroll(CListBox& wndListBox)
 
 void COutputWnd::FillBuildWindow()
 {
-	m_wndOutputBuild.AddString(_T("生成输出正显示在此处。"));
+	/*m_wndOutputBuild.AddString(_T("生成输出正显示在此处。"));
 	m_wndOutputBuild.AddString(_T("输出正显示在列表视图的行中"));
-	m_wndOutputBuild.AddString(_T("但您可以根据需要更改其显示方式..."));
+	m_wndOutputBuild.AddString(_T("但您可以根据需要更改其显示方式..."));*/
 }
 
 void COutputWnd::FillDebugWindow()

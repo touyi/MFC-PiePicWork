@@ -2,6 +2,17 @@
 #include "TManager.h"
 #include"Item.h"
 TManager* TManager::instance;
+CString TManager::GetNowDocTitle()
+{
+	for (auto it = m_pies.begin(); it != m_pies.end(); it++)
+	{
+		if (it->second == m_nowPies)
+		{
+			return it->first;
+		}
+	}
+	return CString();
+}
 CPie * TManager::GetPieByName(CString name)
 {
 	if (m_pies.count(name) > 0)
@@ -36,21 +47,29 @@ void TManager::SetNowPie(CString name)
 	}
 	else
 	{
-		/*m_nowPies = NULL;
-		CallFunc(NULL, TMsgType::DeleteNowPie);*/
+		{
+			m_nowPies = new CPie(name);
+			m_pies[name] = m_nowPies;
+			CallFunc(m_nowPies, TMsgType::FoucsPieChange);
+		}
 	}
 }
 
-void TManager::RegistFunc(function<void(void*, TMsgType)> fun)
+void TManager::RegistFunc(function<void(void*, TMsgType)> fun,CString name)
 {
-	funcs.push_back(fun);
+	funcs[name] = fun;
+}
+
+void TManager::UnRegistFunc(CString name)
+{
+	funcs.erase(name);
 }
 
 void TManager::CallFunc(void * param, TMsgType type)
 {
 	for (auto it = funcs.begin(); it != funcs.end(); it++)
 	{
-		(*it)(param, type);
+		(*it).second(param, type);
 	}
 }
 
@@ -72,6 +91,18 @@ void TManager::SetPieItemCount(CString itemName, int newCount)
 {
 }
 
+void TManager::InsertPie(CString name,CPie * pie)
+{
+	if (pie != NULL)
+	{
+		if (m_pies.count(name) > 0)
+		{
+			delete m_pies[name];
+		}
+		m_pies[name] = pie;
+	}
+}
+
 
 void TManager::InsertItem(CString name, int count, int color, cchar icon)
 {
@@ -91,8 +122,8 @@ void TManager::DeleteNowPieItem(CString name)
 
 TManager::TManager()
 {
-	m_nowPies = NULL;
-	m_nowPies = new CPie(CString("这是饼图1"));
+	/*m_nowPies = NULL;
+	m_nowPies = new CPie(CString("MFC12291"));
 	m_nowPies->InsertItem(_T("类型1"), 100);
 	m_nowPies->InsertItem(_T("类型2"), 100);
 	m_nowPies->InsertItem(_T("类型3"), 100);
@@ -102,7 +133,7 @@ TManager::TManager()
 	m_nowPies->InsertItem(_T("类型88"), 300);
 	m_nowPies->InsertItem(_T("类型99"), 200);
 	m_nowPies->InsertItem(_T("类型145"), 100);
-	m_pies[CString("MFC12292")] = m_nowPies;
+	m_pies[CString("MFC12292")] = m_nowPies;*/
 	m_nowPies = NULL;
 }
 

@@ -32,6 +32,8 @@ ON_WM_SETFOCUS()
 //ON_COMMAND(ID_LIST_NEW, &CMFC1229View::OnListNew)
 //ON_COMMAND(ID_LIST_DELETE, &CMFC1229View::OnListDelete)
 //ON_COMMAND(ID_LIST_CHANGE, &CMFC1229View::OnListChange)
+//ON_WM_ACTIVATE()
+//ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 // CMFC1229View 构造/析构
@@ -39,7 +41,7 @@ END_MESSAGE_MAP()
 CMFC1229View::CMFC1229View()
 {
 	// TODO: 在此处添加构造代码
-	TManager::Get()->RegistFunc(std::bind(&CMFC1229View::ReDraw, this, std::placeholders::_1, std::placeholders::_2));
+	TIns->RegistFunc(std::bind(&CMFC1229View::ReDraw, this, std::placeholders::_1, std::placeholders::_2),_T("view"));
 }
 
 CMFC1229View::~CMFC1229View()
@@ -63,7 +65,7 @@ void CMFC1229View::OnDraw(CDC* pDC)
 	if (!pDoc)
 		return;
 	// MessageBox(pDoc->GetTitle());
-	// TManager::Get()->SetNowPie(pDoc->GetTitle());
+	// TIns->SetNowPie(pDoc->GetTitle());
 	// TODO: 在此处为本机数据添加绘制代码
 	// 双缓冲绘图
 	CRect rc;
@@ -78,7 +80,7 @@ void CMFC1229View::OnDraw(CDC* pDC)
 	CRect showRc = rc;
 	showRc.left = 20;
 	showRc.top = 20;
-	auto pie = TManager::Get()->GetPieByName(pDoc->GetTitle());
+	auto pie = TIns->GetPieByName(pDoc->GetTitle());
 	if (pie != NULL)
 	{
 		pie->SetDrawArea(showRc);
@@ -118,6 +120,10 @@ void CMFC1229View::Dump(CDumpContext& dc) const
 
 void CMFC1229View::ReDraw(void *, TMsgType type)
 {
+	CMFC1229Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
 	if (type == TMsgType::ReDrawPie || TMsgType::UpdateListAndPie)
 	{
 		Invalidate();
@@ -169,7 +175,40 @@ void CMFC1229View::OnSetFocus(CWnd* pOldWnd)
 	auto doc = GetDocument();
 	if (doc != NULL)
 	{
-		TManager::Get()->SetNowPie(doc->GetTitle());
+		TIns->SetNowPie(doc->GetTitle());
 	}
 	// TODO: 在此处添加消息处理程序代码
 }
+
+
+//void CMFC1229View::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized)
+//{
+//	CView::OnActivate(nState, pWndOther, bMinimized);
+//	
+//	// TODO: 在此处添加消息处理程序代码
+//}
+
+
+//BOOL CMFC1229View::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
+//{
+//	BOOL flag = CView::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
+//	TIns->RegistFunc(std::bind(&CMFC1229View::ReDraw, this, std::placeholders::_1, std::placeholders::_2));
+//	return flag;
+//}
+
+
+//void CMFC1229View::OnInitialUpdate()
+//{
+//	CView::OnInitialUpdate();
+//	TIns->RegistFunc(std::bind(&CMFC1229View::ReDraw, this, std::placeholders::_1, std::placeholders::_2),GetDocument()->GetTitle());
+//	// TODO: 在此添加专用代码和/或调用基类
+//}
+
+
+//void CMFC1229View::OnClose()
+//{
+//	// TODO: 在此添加消息处理程序代码和/或调用默认值
+//	TIns->UnRegistFunc(GetDocument()->GetTitle());
+//	CView::OnClose();
+//}
+

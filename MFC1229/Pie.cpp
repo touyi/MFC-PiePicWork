@@ -190,7 +190,10 @@ void CPie::DrawPie(CDC * pdc, float windowPray)
 	
 	
 	auto oldPen = pdc->SelectObject(CreateSolidBrush(GetItemByName(mp.begin()->first).m_color));
-	pdc->Pie(rc, p_start + mid, p_end + mid);
+	if (mp.size() == 1)
+		pdc->Ellipse(rc);
+	else
+		pdc->Pie(rc, p_start + mid, p_end + mid);
 
 	// 绘制首个图标
 	p_half_end += mid;
@@ -218,8 +221,14 @@ void CPie::DrawPie(CDC * pdc, float windowPray)
 
 void CPie::DrawPic(CDC * pdc, CPoint point,CString path)
 {
+	if (path == _T(""))
+		return;
 	CImage img;
-	img.Load(_T(".//res/pic/star.png"));
+	img.Load(path);
+	if (img.IsNull())
+	{
+		return;
+	}
 	int iheight = img.GetHeight();
 	int iwidth = img.GetWidth();
 	CRect rect(point.x - iwidth / 2, point.y - iheight / 2, point.x + iwidth/2, point.y + iheight/2);

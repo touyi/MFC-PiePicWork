@@ -3,7 +3,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 // COutputList 窗口
-
+#include"TManager.h"
 class COutputList : public CListBox
 {
 // 构造
@@ -49,6 +49,7 @@ protected:
 // 实现
 public:
 	virtual ~COutputWnd();
+	void OutOutCallBack(void*param, TMsgType type);
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

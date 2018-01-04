@@ -21,6 +21,14 @@ public:
 	void SetDrawArea(CRect &rc) {
 		m_showRect = rc;
 	}
+	void SetTitle(CString name)
+	{
+		m_title = name;
+	}
+	CString GetTitle()
+	{
+		return m_title;
+	}
 	CI& GetItemByName(CString name);
 	TVector<CI>* GetDatas()
 	{

@@ -43,10 +43,12 @@ public:
 		vec.erase(vec.begin() + index);
 	}
 	T& operator[](int index) {
+		//return arr[index];
 		return vec[index];
 	}
 	int size()
 	{
+		//return arr;
 		return vec.size();
 	}
 private:

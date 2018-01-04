@@ -6,6 +6,7 @@
 #include "MFC1229.h"
 #include "Item.h"
 #include"ItemInfo.h"
+#include"TitleChangeDlg.h"
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
@@ -41,6 +42,7 @@ BEGIN_MESSAGE_MAP(CFileView, CDockablePane)
 	ON_COMMAND(ID_LIST_NEW, &CFileView::OnListNew)
 	ON_COMMAND(ID_LIST_DELETE, &CFileView::OnListDelete)
 	ON_COMMAND(ID_LIST_CHANGE, &CFileView::OnListChange)
+//	ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -86,7 +88,7 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	FillFileView();
 	AdjustLayout();
 	// 注册响应事件
-	TManager::Get()->RegistFunc(std::bind(&CFileView::TMsgFunction, this, std::placeholders::_1, std::placeholders::_2));
+	TIns->RegistFunc(std::bind(&CFileView::TMsgFunction, this, std::placeholders::_1, std::placeholders::_2),_T("FileView"));
 	return 0;
 }
 
@@ -193,8 +195,23 @@ void CFileView::AdjustLayout()
 
 void CFileView::OnProperties()
 {
-	AfxMessageBox(_T("属性...."));
-
+	
+	if (TIns->m_nowPies == NULL)
+	{
+		return;
+	}
+	CTitleChangeDlg dlg;
+	dlg.m_name = TIns->m_nowPies->GetTitle();
+	if (dlg.DoModal() == IDOK)
+	{
+		if (dlg.m_name != TIns->m_nowPies->GetTitle())
+		{
+			TIns->m_nowPies->SetTitle(dlg.m_name);
+			TIns->CallFunc(NULL, TMsgType::ReDrawPie);
+			CString msg = CString("标题修改为：") + dlg.m_name;
+			TIns->CallFunc(&msg, TMsgType::OutPutMessage);
+		}
+	}
 }
 
 void CFileView::OnFileOpen()
@@ -261,7 +278,7 @@ void CFileView::OnLVNChangedCtrlList(NMHDR * pNMHDR, LRESULT * pResult)
 		auto data = reinterpret_cast<CItem<cchar>*>(pNMLV->lParam);
 		bool checkState = 1 & m_wndListCtrl.GetCheck(pNMLV->iItem);
 		if(data->isActive != checkState)
-			TManager::Get()->SetPieItemActive(data->m_name, checkState);
+			TIns->SetPieItemActive(data->m_name, checkState);
 	}
 	*pResult = 0;
 }
@@ -270,7 +287,7 @@ void CFileView::OnNMRClickCtrlList(NMHDR * pNMHDR, LRESULT * pResult)
 {
 	auto pos = m_wndListCtrl.GetFirstSelectedItemPosition();
 	int iitem = m_wndListCtrl.GetNextSelectedItem(pos);
-	if (iitem != -1)
+	//if (iitem != -1)
 	{
 		DWORD dwPos = GetMessagePos();
 		CPoint point(LOWORD(dwPos), HIWORD(dwPos));
@@ -279,6 +296,11 @@ void CFileView::OnNMRClickCtrlList(NMHDR * pNMHDR, LRESULT * pResult)
 		VERIFY(menu.LoadMenu(IDR_MENU1));
 		CMenu* popup = menu.GetSubMenu(0);
 		ASSERT(popup != NULL);
+		if (iitem == -1)
+		{
+			popup->EnableMenuItem(ID_LIST_DELETE, MF_BYCOMMAND|MF_GRAYED);
+			popup->EnableMenuItem(ID_LIST_CHANGE, MF_BYCOMMAND|MF_GRAYED);
+		}
 		popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
 	}
 }
@@ -316,10 +338,9 @@ void CFileView::OnChangeVisualStyle()
 
 
 
-
+// 新增元数据
 void CFileView::OnListNew()
 {
-	// TODO: 新增加元数据
 	CItemInfoDlg itemDlg;
 	srand((unsigned)time(NULL));
 	itemDlg.m_color = RGB(rand() % 255, rand() % 255, rand() % 255);
@@ -327,9 +348,11 @@ void CFileView::OnListNew()
 	if (itemDlg.DoModal() == IDOK)
 	{
 		if (itemDlg.m_legend != _T(""))
-			TManager::Get()->InsertItem(itemDlg.m_name, itemDlg.m_count, itemDlg.m_color,itemDlg.m_legend);
+			TIns->InsertItem(itemDlg.m_name, itemDlg.m_count, itemDlg.m_color,itemDlg.m_legend);
 		else
-			TManager::Get()->InsertItem(itemDlg.m_name, itemDlg.m_count, itemDlg.m_color);
+			TIns->InsertItem(itemDlg.m_name, itemDlg.m_count, itemDlg.m_color);
+		CString msg = CString("新增项：") + itemDlg.m_name;
+		TIns->CallFunc(&msg, TMsgType::OutPutMessage);
 	}
 }
 
@@ -342,9 +365,10 @@ void CFileView::OnListDelete()
 	if (iitem != -1)
 	{
 		auto it = (CItem<cchar>*)m_wndListCtrl.GetItemData(iitem);
+		CString msg = CString("删除项：") + it->m_name;
+		TIns->CallFunc(&msg,TMsgType::OutPutMessage);
 		m_wndListCtrl.DeleteItem(iitem);
-		// TODO：删除it 
-		TManager::Get()->DeleteNowPieItem(it->m_name);
+		TIns->DeleteNowPieItem(it->m_name);
 	}
 }
 
@@ -357,6 +381,46 @@ void CFileView::OnListChange()
 	if (iitem != -1)
 	{
 		auto it = (CItem<cchar>*)m_wndListCtrl.GetItemData(iitem);
-		// TODO：修改it 
+		CItemInfoDlg itemDlg;
+		itemDlg.m_name = it->m_name;
+		itemDlg.m_color = it->m_color;
+		itemDlg.m_count = it->m_count;
+		itemDlg.m_legend = it->m_img;
+		itemDlg.m_caption = _T("修改");
+		if (itemDlg.DoModal() == IDOK)
+		{
+			if (itemDlg.m_name != it->m_name ||
+				itemDlg.m_color != it->m_color ||
+				itemDlg.m_count != it->m_count ||
+				itemDlg.m_legend != it->m_img)
+			{
+				CString firmoney,secmoney,fircolor,seccolor;
+				firmoney.Format(L"%d", it->m_count);
+				secmoney.Format(L"%d", itemDlg.m_count);
+				fircolor.Format(L"%d", it->m_count);
+				seccolor.Format(L"%d", itemDlg.m_count);
+				CString msg = CString("修改项：") +
+					CString("名字") + it->m_name + CString("->") + itemDlg.m_name +
+					CString(" 金额") + firmoney + CString("->") + secmoney +
+					CString(" 颜色") + fircolor + CString("->") + seccolor;
+				TIns->CallFunc(&msg, TMsgType::OutPutMessage);
+				it->m_name = itemDlg.m_name;
+				it->m_color = itemDlg.m_color;
+				it->m_count = itemDlg.m_count;
+				it->m_img = itemDlg.m_legend;
+				TIns->CallFunc(TIns->m_nowPies, TMsgType::UpdateListAndPie);
+			}
+		}
 	}
 }
+
+
+//void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
+//{
+//	// TODO: 在此添加消息处理程序代码和/或调用默认值
+//	if (m_wndListCtrl.GetItemCount() <= 0)
+//	{
+//		g
+//	}
+//	CDockablePane::OnLButtonDown(nFlags, point);
+//}

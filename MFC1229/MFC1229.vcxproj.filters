@@ -72,6 +72,9 @@
     <ClInclude Include="ItemInfo.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="TitleChangeDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFC1229.cpp">
@@ -120,6 +123,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ItemInfo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleChangeDlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

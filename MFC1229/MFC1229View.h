@@ -48,6 +48,10 @@ public:
 //	afx_msg void OnMDIActivate(BOOL bActivate, CWnd* pActivateWnd, CWnd* pDeactivateWnd);
 //	virtual void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
+//	afx_msg void OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized);
+//	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
+//	virtual void OnInitialUpdate();
+//	afx_msg void OnClose();
 };
 
 #ifndef _DEBUG  // MFC1229View.cpp 中的调试版本

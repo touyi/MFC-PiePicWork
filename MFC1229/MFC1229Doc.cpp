@@ -12,7 +12,8 @@
 #include "MFC1229Doc.h"
 
 #include <propkey.h>
-
+#include"TManager.h"
+#include"Item.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -57,11 +58,28 @@ void CMFC1229Doc::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		// TODO: 在此添加存储代码
+		ar << TIns->m_nowPies->GetTitle();
+		ar << TIns->m_nowPies->GetDatas()->size();
+		auto& datas = *TIns->m_nowPies->GetDatas();
+		for (int i = 0; i < datas.size(); i++)
+		{
+			ar << datas[i].m_name << datas[i].m_count << datas[i].m_color << datas[i].m_img;
+		}
 	}
 	else
 	{
-		// TODO: 在此添加加载代码
+		CString name;
+		ar >> name;
+		CPie* pie = new CPie(name);
+		int size;
+		ar >> size;
+		CPie::CI item;
+		for (int i = 0; i < size; i++)
+		{
+			ar >> item.m_name >> item.m_count >> item.m_color >> item.m_img;
+			pie->InsertItem(item);
+		}
+		TIns->InsertPie(ar.GetFile()->GetFileName(), pie);
 	}
 }
 
