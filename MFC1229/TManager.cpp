@@ -72,6 +72,7 @@ void TManager::SetPieItemCount(CString itemName, int newCount)
 {
 }
 
+
 void TManager::InsertItem(CString name, int count, int color, cchar icon)
 {
 	CPie::CI* item = new CPie::CI(name, count, color);
@@ -79,6 +80,13 @@ void TManager::InsertItem(CString name, int count, int color, cchar icon)
 	m_nowPies->InsertItem(*item);
 
 	CallFunc(m_nowPies, TMsgType::UpdateListAndPie);
+}
+void TManager::DeleteNowPieItem(CString name)
+{
+	if (m_nowPies == NULL)
+		return;
+	m_nowPies->DeleteItemByName(name);
+	CallFunc(NULL, TMsgType::ReDrawPie);
 }
 
 TManager::TManager()

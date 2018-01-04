@@ -34,7 +34,10 @@ public:
 	void SetPieItemActive(CString itemName, bool isActive);
 	void SetPieItemName(CString oldName, CString newName);
 	void SetPieItemCount(CString itemName, int newCount);
+
 	void InsertItem(CString name, int count, int color, cchar icon = CString("./res/pic/star.png"));
+
+	void DeleteNowPieItem(CString name);
 	TManager();
 	~TManager();
 };

@@ -342,7 +342,9 @@ void CFileView::OnListDelete()
 	if (iitem != -1)
 	{
 		auto it = (CItem<cchar>*)m_wndListCtrl.GetItemData(iitem);
+		m_wndListCtrl.DeleteItem(iitem);
 		// TODO£ºÉ¾³ýit 
+		TManager::Get()->DeleteNowPieItem(it->m_name);
 	}
 }
 
