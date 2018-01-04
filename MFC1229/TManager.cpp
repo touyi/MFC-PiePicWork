@@ -72,6 +72,15 @@ void TManager::SetPieItemCount(CString itemName, int newCount)
 {
 }
 
+void TManager::InsertItem(CString name, int count, int color, cchar icon)
+{
+	CPie::CI* item = new CPie::CI(name, count, color);
+	item->m_img = icon;
+	m_nowPies->InsertItem(*item);
+
+	CallFunc(m_nowPies, TMsgType::UpdateListAndPie);
+}
+
 TManager::TManager()
 {
 	m_nowPies = NULL;

@@ -85,6 +85,12 @@
 #define IDS_EXPLORER                    305
 #define IDS_EDIT_MENU                   306
 #define IDR_MENU1                       310
+#define IDD_DIALOG1                     311
+#define IDD_ITEM_INFO                   311
+#define IDC_EDIT1                       1000
+#define IDC_EDIT2                       1001
+#define IDC_EDIT3                       1002
+#define IDC_BUTTON1                     1003
 #define ID_LIST_32771                   32771
 #define ID_LIST_32772                   32772
 #define ID_LIST_32773                   32773
@@ -97,9 +103,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        311
+#define _APS_NEXT_RESOURCE_VALUE        313
 #define _APS_NEXT_COMMAND_VALUE         32778
-#define _APS_NEXT_CONTROL_VALUE         1000
+#define _APS_NEXT_CONTROL_VALUE         1004
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

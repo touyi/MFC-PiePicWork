@@ -189,6 +189,7 @@
     <ClInclude Include="ClassView.h" />
     <ClInclude Include="FileView.h" />
     <ClInclude Include="Item.h" />
+    <ClInclude Include="ItemInfo.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MFC1229.h" />
     <ClInclude Include="MFC1229Doc.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="ClassView.cpp" />
     <ClCompile Include="FileView.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="ItemInfo.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MFC1229.cpp" />
     <ClCompile Include="MFC1229Doc.cpp" />

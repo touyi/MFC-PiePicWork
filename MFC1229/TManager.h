@@ -7,7 +7,8 @@ using std::map;
 enum TMsgType {
 	FoucsPieChange,
 	DeleteNowPie,
-	ReDrawPie
+	ReDrawPie,
+	UpdateListAndPie
 };
 class TManager
 {
@@ -33,6 +34,7 @@ public:
 	void SetPieItemActive(CString itemName, bool isActive);
 	void SetPieItemName(CString oldName, CString newName);
 	void SetPieItemCount(CString itemName, int newCount);
+	void InsertItem(CString name, int count, int color, cchar icon = CString("./res/pic/star.png"));
 	TManager();
 	~TManager();
 };

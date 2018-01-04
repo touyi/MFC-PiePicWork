@@ -412,6 +412,23 @@ BEGIN
     DEFPUSHBUTTON   "确定",IDOK,113,41,50,14,WS_GROUP
 END
 
+IDD_ITEM_INFO DIALOGEX 0, 0, 253, 124
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,67,103,50,14
+    PUSHBUTTON      "取消",IDCANCEL,139,103,50,14
+    LTEXT           "名称",IDC_STATIC,47,15,17,8
+    LTEXT           "金额",IDC_STATIC,48,35,17,8
+    LTEXT           "颜色",IDC_STATIC,48,56,17,8
+    LTEXT           "图例",IDC_STATIC,49,76,17,8
+    EDITTEXT        IDC_EDIT1,69,12,99,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,69,33,99,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT3,69,74,98,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "选择",IDC_BUTTON1,177,74,50,14
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -467,8 +484,27 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 55
     END
+
+    IDD_ITEM_INFO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 246
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 117
+    END
 END
 #endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_ITEM_INFO AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
 
 
 /////////////////////////////////////////////////////////////////////////////

@@ -5,6 +5,7 @@
 #include "Resource.h"
 #include "MFC1229.h"
 #include "Item.h"
+#include"ItemInfo.h"
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
@@ -131,6 +132,7 @@ void CFileView::TMsgFunction(void * param, TMsgType type)
 {
 	switch (type)
 	{
+	case UpdateListAndPie:
 	case FoucsPieChange:
 		m_nowPie = static_cast<CPie*> (param);
 		FillFileView();
@@ -318,6 +320,17 @@ void CFileView::OnChangeVisualStyle()
 void CFileView::OnListNew()
 {
 	// TODO: 新增加元数据
+	CItemInfoDlg itemDlg;
+	srand((unsigned)time(NULL));
+	itemDlg.m_color = RGB(rand() % 255, rand() % 255, rand() % 255);
+	itemDlg.m_caption = _T("新增");
+	if (itemDlg.DoModal() == IDOK)
+	{
+		if (itemDlg.m_legend != _T(""))
+			TManager::Get()->InsertItem(itemDlg.m_name, itemDlg.m_count, itemDlg.m_color,itemDlg.m_legend);
+		else
+			TManager::Get()->InsertItem(itemDlg.m_name, itemDlg.m_count, itemDlg.m_color);
+	}
 }
 
 

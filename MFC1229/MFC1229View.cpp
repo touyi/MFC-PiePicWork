@@ -118,7 +118,7 @@ void CMFC1229View::Dump(CDumpContext& dc) const
 
 void CMFC1229View::ReDraw(void *, TMsgType type)
 {
-	if (type == TMsgType::ReDrawPie)
+	if (type == TMsgType::ReDrawPie || TMsgType::UpdateListAndPie)
 	{
 		Invalidate();
 	}
