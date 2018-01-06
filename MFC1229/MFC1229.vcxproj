@@ -186,7 +186,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChildFrm.h" />
-    <ClInclude Include="ClassView.h" />
     <ClInclude Include="FileView.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemInfo.h" />
@@ -196,7 +195,6 @@
     <ClInclude Include="MFC1229View.h" />
     <ClInclude Include="OutputWnd.h" />
     <ClInclude Include="Pie.h" />
-    <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -207,7 +205,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChildFrm.cpp" />
-    <ClCompile Include="ClassView.cpp" />
     <ClCompile Include="FileView.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemInfo.cpp" />
@@ -217,7 +214,6 @@
     <ClCompile Include="MFC1229View.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
     <ClCompile Include="Pie.cpp" />
-    <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
