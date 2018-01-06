@@ -222,35 +222,38 @@ void CMFC1229View::OnLButtonDblClk(UINT nFlags, CPoint point)
 	if (TIns->m_nowPies != NULL)
 	{
 		auto it = TIns->m_nowPies->ClickItem(point);
-		CItemInfoDlg dlg;
-		CItemInfoDlg itemDlg;
-		itemDlg.m_name = it->m_name;
-		itemDlg.m_color = it->m_color;
-		itemDlg.m_count = it->m_count;
-		itemDlg.m_legend = it->m_img;
-		itemDlg.m_caption = _T("修改");
-		if (itemDlg.DoModal() == IDOK)
+		if (it != NULL)
 		{
-			if (itemDlg.m_name != it->m_name ||
-				itemDlg.m_color != it->m_color ||
-				itemDlg.m_count != it->m_count ||
-				itemDlg.m_legend != it->m_img)
+			CItemInfoDlg dlg;
+			CItemInfoDlg itemDlg;
+			itemDlg.m_name = it->m_name;
+			itemDlg.m_color = it->m_color;
+			itemDlg.m_count = it->m_count;
+			itemDlg.m_legend = it->m_img;
+			itemDlg.m_caption = _T("修改");
+			if (itemDlg.DoModal() == IDOK)
 			{
-				CString firmoney, secmoney, fircolor, seccolor;
-				firmoney.Format(L"%d", it->m_count);
-				secmoney.Format(L"%d", itemDlg.m_count);
-				fircolor.Format(L"%d", it->m_count);
-				seccolor.Format(L"%d", itemDlg.m_count);
-				CString msg = CString("修改项：") +
-					CString("名字") + it->m_name + CString("->") + itemDlg.m_name +
-					CString(" 金额") + firmoney + CString("->") + secmoney +
-					CString(" 颜色") + fircolor + CString("->") + seccolor;
-				TIns->CallFunc(&msg, TMsgType::OutPutMessage);
-				it->m_name = itemDlg.m_name;
-				it->m_color = itemDlg.m_color;
-				it->m_count = itemDlg.m_count;
-				it->m_img = itemDlg.m_legend;
-				TIns->CallFunc(TIns->m_nowPies, TMsgType::UpdateListAndPie);
+				if (itemDlg.m_name != it->m_name ||
+					itemDlg.m_color != it->m_color ||
+					itemDlg.m_count != it->m_count ||
+					itemDlg.m_legend != it->m_img)
+				{
+					CString firmoney, secmoney, fircolor, seccolor;
+					firmoney.Format(L"%d", it->m_count);
+					secmoney.Format(L"%d", itemDlg.m_count);
+					fircolor.Format(L"%d", it->m_count);
+					seccolor.Format(L"%d", itemDlg.m_count);
+					CString msg = CString("修改项：") +
+						CString("名字") + it->m_name + CString("->") + itemDlg.m_name +
+						CString(" 金额") + firmoney + CString("->") + secmoney +
+						CString(" 颜色") + fircolor + CString("->") + seccolor;
+					TIns->CallFunc(&msg, TMsgType::OutPutMessage);
+					it->m_name = itemDlg.m_name;
+					it->m_color = itemDlg.m_color;
+					it->m_count = itemDlg.m_count;
+					it->m_img = itemDlg.m_legend;
+					TIns->CallFunc(TIns->m_nowPies, TMsgType::UpdateListAndPie);
+				}
 			}
 		}
 	}
