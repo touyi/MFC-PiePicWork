@@ -41,7 +41,7 @@ protected:  // 控件条嵌入成员
 	CFileView         m_wndFileView;
 	//CClassView        m_wndClassView;
 	COutputWnd        m_wndOutput;
-	CPropertiesWnd    m_wndProperties;
+	// CPropertiesWnd    m_wndProperties;
 
 // 生成的消息映射函数
 protected:

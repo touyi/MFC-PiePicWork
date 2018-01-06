@@ -21,6 +21,7 @@ public:
 	void SetDrawArea(CRect &rc) {
 		m_showRect = rc;
 	}
+	CI* ClickItem(CPoint pt);
 	void SetTitle(CString name)
 	{
 		m_title = name;
@@ -38,7 +39,7 @@ private:
 	TVector<CI> data;
 	CString m_title;
 	CRect m_showRect;
-
+	float CalRatio(); // ¼ÆËã±ÈÀý³ß
 	void DrawTitle(CDC* pdc, float windowPray);
 	void DrawLegend(CDC* pdc, float windowPray);
 	void DrawPie(CDC* pdc, float windowPray);

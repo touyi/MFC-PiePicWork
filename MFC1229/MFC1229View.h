@@ -52,6 +52,7 @@ public:
 //	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
 //	virtual void OnInitialUpdate();
 //	afx_msg void OnClose();
+	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 };
 
 #ifndef _DEBUG  // MFC1229View.cpp 中的调试版本

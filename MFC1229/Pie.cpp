@@ -23,23 +23,7 @@ CPie::~CPie()
 // 绘制图形
 void CPie::Draw(CDC * pdc)
 {
-	
-
-
-	// 计算自适应比例尺
-	const float Width_height_ratio = 8.0f / 6.0f;
-	float nowRatio = m_showRect.Width()*1.0f / m_showRect.Height();
-	float nowPray = 1;
-	if (nowRatio > Width_height_ratio)
-	{
-		nowPray = m_showRect.Height() / 200.0f;
-	}
-	else
-	{
-		nowPray = m_showRect.Width() / (200.0f * Width_height_ratio);
-	}
-
-
+	float nowPray = CalRatio();
 
 	// 绘制饼图
 	DrawPie(pdc, nowPray);
@@ -80,6 +64,53 @@ void CPie::InsertItem(CI & item)
 	data.push_back(item);
 }
 
+CPie::CI * CPie::ClickItem(CPoint pt)
+{
+	const float PI = 3.1415926;
+	pt -= m_showRect.TopLeft();
+	float ratio = CalRatio();
+	float radius = 80 * ratio;
+	int disx = (pt.x - radius);
+	int disy = (pt.y - radius);
+	if (disx*disx + disy*disy <= radius*radius)
+	{
+		if (data.size() <= 0)return NULL;
+		map<CString, float> mp;
+		double sum = 0;
+		data.for_each([&sum](CI& it) {
+			if (it.isActive)
+				sum += it.m_count;
+			return false;
+		});
+
+		for (int i = 0; i < data.size(); i++)
+		{
+			if (!data[i].isActive)continue;
+			CString name = data[i].m_name;
+			float pray = data[i].m_count / sum;
+			mp[name] = pray;
+		}
+		disy = -disy; // y轴翻转
+		float thea = acos(disx / sqrt(disx*disx + disy*disy));
+		if (disy < 0)
+		{
+			thea = 2 * PI - thea;
+		}
+		sum = 0;
+		for (auto it = mp.begin(); it != mp.end(); it++)
+		{
+			sum += 2 * PI*it->second;
+			if (sum >= thea)
+			{
+				return &(GetItemByName(it->first));
+			}
+		}
+		return NULL;
+	}
+	
+	return NULL;
+}
+
 CPie::CI& CPie::GetItemByName(CString name)
 {
 	CI* temp = NULL;
@@ -96,6 +127,22 @@ CPie::CI& CPie::GetItemByName(CString name)
 		abort();
 	}
 	return *temp;
+}
+
+float CPie::CalRatio()
+{
+	const float Width_height_ratio = 8.0f / 6.0f;
+	float nowRatio = m_showRect.Width()*1.0f / m_showRect.Height();
+	float nowPray = 1;
+	if (nowRatio > Width_height_ratio)
+	{
+		nowPray = m_showRect.Height() / 200.0f;
+	}
+	else
+	{
+		nowPray = m_showRect.Width() / (200.0f * Width_height_ratio);
+	}
+	return nowPray;
 }
 
 void CPie::DrawTitle(CDC * pdc, float windowPray)
