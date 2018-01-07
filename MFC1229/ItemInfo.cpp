@@ -16,7 +16,7 @@ CItemInfoDlg::CItemInfoDlg(CWnd* pParent /*=NULL*/)
 	, m_name(_T(""))
 	, m_count(0)
 	, m_legend(_T(""))
-	, m_color_rect(CRect(105, 85, 180, 110))
+	, m_color_rect(CRect(120, 110, 195, 135))
 {
 
 }

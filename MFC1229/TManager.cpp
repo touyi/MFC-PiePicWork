@@ -57,12 +57,13 @@ void TManager::SetNowPie(CString name)
 
 void TManager::RegistFunc(function<void(void*, TMsgType)> fun,CString name)
 {
-	funcs[name] = fun;
+		funcs[name] = fun;
 }
 
 void TManager::UnRegistFunc(CString name)
 {
-	funcs.erase(name);
+	if(funcs.count(name)>0)
+		funcs.erase(name);
 }
 
 void TManager::CallFunc(void * param, TMsgType type)

@@ -36,6 +36,8 @@ ON_WM_SETFOCUS()
 //ON_WM_ACTIVATE()
 //ON_WM_CLOSE()
 ON_WM_LBUTTONDBLCLK()
+//ON_WM_CLOSE()
+ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
 
 // CMFC1229View 构造/析构
@@ -43,7 +45,7 @@ END_MESSAGE_MAP()
 CMFC1229View::CMFC1229View()
 {
 	// TODO: 在此处添加构造代码
-	TIns->RegistFunc(std::bind(&CMFC1229View::ReDraw, this, std::placeholders::_1, std::placeholders::_2),_T("view"));
+	
 }
 
 CMFC1229View::~CMFC1229View()
@@ -177,6 +179,7 @@ void CMFC1229View::OnSetFocus(CWnd* pOldWnd)
 	auto doc = GetDocument();
 	if (doc != NULL)
 	{
+		TIns->RegistFunc(std::bind(&CMFC1229View::ReDraw, this, std::placeholders::_1, std::placeholders::_2), L"view");
 		TIns->SetNowPie(doc->GetTitle());
 	}
 	// TODO: 在此处添加消息处理程序代码
@@ -258,4 +261,34 @@ void CMFC1229View::OnLButtonDblClk(UINT nFlags, CPoint point)
 		}
 	}
 	CView::OnLButtonDblClk(nFlags, point);
+}
+
+
+void CMFC1229View::OnInitialUpdate()
+{
+	CView::OnInitialUpdate();
+	// TODO: 在此添加专用代码和/或调用基类
+}
+
+
+//void CMFC1229View::OnClose()
+//{
+//	// TODO: 在此添加消息处理程序代码和/或调用默认值
+//	
+//	CView::OnClose();
+//}
+
+
+//BOOL CMFC1229View::DestroyWindow()
+//{
+//	// TODO: 在此添加专用代码和/或调用基类
+//	MessageBox(GetDocument()->GetTitle());
+//	return CView::DestroyWindow();
+//}
+
+
+void CMFC1229View::OnKillFocus(CWnd* pNewWnd)
+{
+	CView::OnKillFocus(pNewWnd);
+	// TODO: 在此处添加消息处理程序代码
 }

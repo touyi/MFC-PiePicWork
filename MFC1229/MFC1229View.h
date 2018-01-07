@@ -53,6 +53,10 @@ public:
 //	virtual void OnInitialUpdate();
 //	afx_msg void OnClose();
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+	virtual void OnInitialUpdate();
+//	afx_msg void OnClose();
+//	virtual BOOL DestroyWindow();
+	afx_msg void OnKillFocus(CWnd* pNewWnd);
 };
 
 #ifndef _DEBUG  // MFC1229View.cpp 中的调试版本
