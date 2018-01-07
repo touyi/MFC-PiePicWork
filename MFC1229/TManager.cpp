@@ -123,18 +123,6 @@ void TManager::DeleteNowPieItem(CString name)
 
 TManager::TManager()
 {
-	/*m_nowPies = NULL;
-	m_nowPies = new CPie(CString("MFC12291"));
-	m_nowPies->InsertItem(_T("类型1"), 100);
-	m_nowPies->InsertItem(_T("类型2"), 100);
-	m_nowPies->InsertItem(_T("类型3"), 100);
-	m_pies[CString("MFC12291")] = m_nowPies;
-
-	m_nowPies = new CPie(CString("这是饼图2"));
-	m_nowPies->InsertItem(_T("类型88"), 300);
-	m_nowPies->InsertItem(_T("类型99"), 200);
-	m_nowPies->InsertItem(_T("类型145"), 100);
-	m_pies[CString("MFC12292")] = m_nowPies;*/
 	m_nowPies = NULL;
 }
 
